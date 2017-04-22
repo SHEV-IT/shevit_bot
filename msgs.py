@@ -32,10 +32,10 @@ class MsgWorker:
         while new_state:
             self.user_state[sender] = new_state
             new_state_f = self.states.get(new_state)
-            new_state = new_state_f(sender, new_state, msg=None) if new_state_f else 'error'
+            new_state = new_state_f(sender, new_state) if new_state_f else 'error'
 
     def multiple_choice(self, state_welcome_msg, choices_dict, error_msg=t.YES_NO_ERROR_MSG):
-        def state_some(self, sender, state, msg=None):
+        def state_multiple_choice(sender, state, msg=None):
             if msg is None:
                 VkApi.send_msg(sender, state_welcome_msg)
                 return
@@ -47,16 +47,18 @@ class MsgWorker:
 
             VkApi.send_msg(sender, error_msg)
 
-        return state_some
+        return state_multiple_choice
 
     def show_text_and_exit(self, state_msg, wait_next_msg=True):
-        def state_some(self, sender, state, msg=None):
+        def state_text_exit(sender, state, msg=None):
             if msg is None:
                 VkApi.send_msg(sender, state_msg)
                 if not wait_next_msg:
                     return 'menu'
 
             return 'menu'
+
+        return state_text_exit
 
     def state_menu(self, sender, state, msg=None):
         if msg is None:
