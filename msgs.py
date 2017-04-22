@@ -26,14 +26,19 @@ class MsgWorker:
         sender = msg['user_id']
         state = self.user_state.get(sender, t.DEFAULT_STATE)
         state_f = self.states.get(state)
+
         new_state = state_f(sender, state, msg) if state_f else 'error'
-        if new_state:
+
+        while new_state:
             self.user_state[sender] = new_state
+            new_state_f = self.states.get(new_state)
+            new_state = new_state_f(sender, new_state, msg=None) if new_state_f else 'error'
 
     def multiple_choice(self, state_welcome_msg, choices_dict, error_msg=t.YES_NO_ERROR_MSG):
         def state_some(self, sender, state, msg=None):
             if msg is None:
                 VkApi.send_msg(sender, state_welcome_msg)
+                return
 
             text = msg['body'].strip()
             for choice in choices_dict:
