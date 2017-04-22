@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from .api import VkApi
 import text as t
+import constants as c
 
 
 class MsgWorker:
@@ -29,6 +30,9 @@ class MsgWorker:
 
     def proceed(self, msg):
         sender = msg['user_id']
+        if c.DEBUG and sender not in c.ADMINS:
+            return
+        
         state = self.user_state.get(sender, t.DEFAULT_STATE)
         state_f = self.states.get(state)
 
