@@ -12,6 +12,6 @@ YES_NO_ERROR_MSG = """Будь ласка, оберіть відповідь: т
 
 BILL_MSG = """Ви підключаєтесь вперше? так/ні"""
 BILL_FIRST_FUCK_MSG = """Ви маєте акаунт у Bill?"""
-BILL_FIRST_ROUTER_MSG = """"""
-BILL_FIRST_ACCOUNT_MSG = """"""
-BILL_ROUTER_SETTINGS = """"""
+BILL_FIRST_ROUTER_MSG = """Вам потрібно налаштувати роутер?"""
+BILL_FIRST_ACCOUNT_MSG = """гайд по реєстрації акаунта в bill"""
+BILL_ROUTER_SETTINGS = """налаштування роутера. Чи вдалося Вам налаштувати роутер?"""
