@@ -46,6 +46,9 @@ class MsgWorker:
                 return
 
             text = msg['body'].strip()
+            if text == 'меню':
+                return 'menu'
+
             for choice in choices_dict:
                 if text == choice:
                     return choices_dict[choice]
