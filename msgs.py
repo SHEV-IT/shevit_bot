@@ -6,7 +6,11 @@ import text as t
 
 class MsgWorker:
     def __init__(self):
-        self.states = {'menu': self.state_menu,
+        self.states = {'menu': self.multiple_choice(t.WELCOME_MSG,
+                                                    {'bill': 'bill',
+                                                     'eduroam': 'eduroam',
+                                                     'інше': 'etc'},
+                                                    error_msg=t.WELCOME_MSG),
                        'error': self.show_text_and_exit(t.ERROR_MSG, wait_next_msg=False),
                        'bill': self.multiple_choice(t.BILL_MSG,
                                                     {'так': 'bill_first_fuck',
@@ -60,21 +64,3 @@ class MsgWorker:
             return 'menu'
 
         return state_text_exit
-
-    def state_menu(self, sender, state, msg=None):
-        if msg is None:
-            VkApi.send_msg(sender, t.WELCOME_MSG)
-            return
-
-        text = msg['body'].strip()
-        if text == 'bill':
-            VkApi.send_msg(sender, t.HOWTO_EXIT_MSG)
-            return 'bill'
-        elif text == 'eduroam':
-            VkApi.send_msg(sender, t.HOWTO_EXIT_MSG)
-            return 'eduroam'
-        elif text == 'інше':
-            VkApi.send_msg(sender, t.HOWTO_EXIT_MSG)
-            return 'other'
-        else:
-            VkApi.send_msg(sender, t.WELCOME_MSG)
