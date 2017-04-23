@@ -48,16 +48,17 @@ class MsgWorker:
                                                                               t.BILL_ICC,
                                                                               t.BILL_ADMIN_CONTACTS]),
                        'bill_should_work': self.show_text_and_exit(t.BILL_SHOULD_WORK),
-                       'bill_first_account': self.show_text_and_exit([t.BILL_REGISTER,
-                                                                      t.BILL_ICC],
-                                                                     exit_state='bill_first_pay'),
+                       'bill_first_account': self.multiple_choice([t.BILL_REGISTER,
+                                                                   t.BILL_ICC],
+                                                                  {'так': 'bill_first_pay'},
+                                                                  errors=False, error_state='menu'),
                        'bill_first_pay': self.show_text_and_exit(t.BILL_PAY, 'bill_first_pay_check'),
                        'bill_first_pay_check': self.multiple_choice(t.BILL_PAY_CHECK,
                                                                     {'так': 'bill_first_router',
                                                                      'ні': 'bill_first_pay_failed'}),
                        'bill_first_pay_failed': self.show_text_and_exit(t.BILL_PAY_FAILED),
                        'bill_check_if_account': self.show_text_and_exit(t.BILL_CHECK_IF_ACCOUNT,
-                                                                        exit_state='bill_first_fuck'),
+                                                                        exit_state='bill_first_fuck', wait_next=False),
                        'bill_show_icc': self.show_text_and_exit(t.BILL_ICC)}
         self.user_state = dict()
         errors = self.possible_states - set(self.states.keys())
