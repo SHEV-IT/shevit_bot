@@ -123,6 +123,7 @@ class MsgWorker:
                         VkApi.send_msg(sender, msg)
                 if not wait_next:
                     return exit_state
+                return
 
             return exit_state
 
