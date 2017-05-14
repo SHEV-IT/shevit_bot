@@ -1,77 +1,80 @@
 # coding: utf-8
 from __future__ import unicode_literals
 from .api import VkApi
-import text as t
-import constants as c
+from projects.abstract import load_module
 
 
 class MsgWorker:
+    c = load_module('projects.shevit_bot.constants', globals())
+    t = load_module('projects.shevit_bot.text', globals())
+    vk_api = VkApi()
+
     def __init__(self):
         self.possible_states = set()
-        self.states = {'menu': self.multiple_choice(t.WELCOME,
+        self.states = {'menu': self.multiple_choice(self.t.WELCOME,
                                                     {'bill': 'bill',
                                                      'eduroam': 'eduroam',
                                                      'інше': 'etc',
                                                      'мапа': 'bill_show_icc'},
-                                                    errors=t.WELCOME),
-                       'error': self.show_text_and_exit(t.ERROR, wait_next=False),
-                       'bill': self.multiple_choice(t.BILL,
+                                                    errors=self.t.WELCOME),
+                       'error': self.show_text_and_exit(self.t.ERROR, wait_next=False),
+                       'bill': self.multiple_choice(self.t.BILL,
                                                     {'так': 'check_bill_available',
                                                      'ні': 'bill_already_pwned'}),
-                       'check_bill_available': self.multiple_choice(t.BILL_FIRST_ROOM_CABLE,
+                       'check_bill_available': self.multiple_choice(self.t.BILL_FIRST_ROOM_CABLE,
                                                                     {'так': 'bill_first_fuck',
                                                                      'ні': 'bill_cable_not_found'}),
-                       'bill_first_fuck': self.multiple_choice(t.BILL_FIRST_FUCK,
+                       'bill_first_fuck': self.multiple_choice(self.t.BILL_FIRST_FUCK,
                                                                {'так': 'bill_first_router',
                                                                 'ні': 'bill_first_account',
                                                                 'не знаю': 'bill_check_if_account'}),
-                       'bill_cable_not_found': self.multiple_choice(t.BILL_CABLE_NOT_FOUND,
+                       'bill_cable_not_found': self.multiple_choice(self.t.BILL_CABLE_NOT_FOUND,
                                                                     {'так': 'bill_first_fuck',
                                                                      'ні': 'bill_no_cable_redirect'}),
-                       'bill_no_cable_redirect': self.show_text_and_exit([t.BILL_NO_CABLE_REDIRECT,
-                                                                          t.BILL_ICC]),
-                       'bill_first_router': self.multiple_choice(t.BILL_FIRST_ROUTER,
+                       'bill_no_cable_redirect': self.show_text_and_exit([self.t.BILL_NO_CABLE_REDIRECT,
+                                                                          self.t.BILL_ICC]),
+                       'bill_first_router': self.multiple_choice(self.t.BILL_FIRST_ROUTER,
                                                                  {'так': 'bill_first_config_router',
                                                                   'ні': 'bill_first_computer'}),
-                       'bill_first_config_router': self.multiple_choice(t.BILL_ROUTER_SETTINGS,
+                       'bill_first_config_router': self.multiple_choice(self.t.BILL_ROUTER_SETTINGS,
                                                                         {'так': 'bill_should_work',
                                                                          'ні': 'bill_router_config_error'}),
-                       'bill_router_config_error': self.show_text_and_exit([t.BILL_ROUTER_CONFIG_ERROR,
-                                                                            t.BILL_ADMIN_CONTACTS]),
-                       'bill_first_computer': self.multiple_choice(t.BILL_FIRST_COMPUTER,
+                       'bill_router_config_error': self.show_text_and_exit([self.t.BILL_ROUTER_CONFIG_ERROR,
+                                                                            self.t.BILL_ADMIN_CONTACTS]),
+                       'bill_first_computer': self.multiple_choice(self.t.BILL_FIRST_COMPUTER,
                                                                    {'так': 'bill_first_config_computer',
                                                                     'ні': 'bill_should_work'}),
-                       'bill_first_config_computer': self.multiple_choice(t.BILL_COMPUTER_SETTINGS,
+                       'bill_first_config_computer': self.multiple_choice(self.t.BILL_COMPUTER_SETTINGS,
                                                                           {'так': 'bill_should_work',
                                                                            'ні': 'bill_computer_config_error'}),
-                       'bill_computer_config_error': self.show_text_and_exit([t.BILL_COMPUTER_CONFIG_ERROR,
-                                                                              t.BILL_ICC,
-                                                                              t.BILL_ADMIN_CONTACTS]),
-                       'bill_should_work': self.show_text_and_exit(t.BILL_SHOULD_WORK),
-                       'bill_first_account': self.multiple_choice([t.BILL_REGISTER,
-                                                                   t.BILL_ICC],
+                       'bill_computer_config_error': self.show_text_and_exit([self.t.BILL_COMPUTER_CONFIG_ERROR,
+                                                                              self.t.BILL_ICC,
+                                                                              self.t.BILL_ADMIN_CONTACTS]),
+                       'bill_should_work': self.show_text_and_exit(self.t.BILL_SHOULD_WORK),
+                       'bill_first_account': self.multiple_choice([self.t.BILL_REGISTER,
+                                                                   self.t.BILL_ICC],
                                                                   {'так': 'bill_first_pay'},
                                                                   errors=False, error_state='menu'),
-                       'bill_first_pay': self.show_text_and_exit(t.BILL_PAY, 'bill_first_pay_check'),
-                       'bill_first_pay_check': self.multiple_choice(t.BILL_PAY_CHECK,
+                       'bill_first_pay': self.show_text_and_exit(self.t.BILL_PAY, 'bill_first_pay_check'),
+                       'bill_first_pay_check': self.multiple_choice(self.t.BILL_PAY_CHECK,
                                                                     {'так': 'bill_first_router',
                                                                      'ні': 'bill_first_pay_failed'}),
-                       'bill_first_pay_failed': self.show_text_and_exit(t.BILL_PAY_FAILED),
-                       'bill_check_if_account': self.show_text_and_exit(t.BILL_CHECK_IF_ACCOUNT,
+                       'bill_first_pay_failed': self.show_text_and_exit(self.t.BILL_PAY_FAILED),
+                       'bill_check_if_account': self.show_text_and_exit(self.t.BILL_CHECK_IF_ACCOUNT,
                                                                         exit_state='bill_first_fuck', wait_next=False),
-                       'bill_show_icc': self.show_text_and_exit(t.BILL_ICC)}
+                       'bill_show_icc': self.show_text_and_exit(self.t.BILL_ICC)}
         self.user_state = dict()
         errors = self.possible_states - set(self.states.keys())
-        if errors and c.ONLOAD_CHECK:
+        if errors and self.c.ONLOAD_CHECK:
             print 'errors:', errors
             raise NotImplementedError
 
     def proceed(self, msg):
         sender = msg['user_id']
-        if c.DEBUG and sender not in c.ADMINS:
+        if self.c.DEBUG and sender not in self.c.ADMINS:
             return
 
-        state = self.user_state.get(sender, t.DEFAULT_STATE)
+        state = self.user_state.get(sender, self.t.DEFAULT_STATE)
         state_f = self.states.get(state)
 
         new_state = state_f(sender, state, msg) if state_f else 'error'
@@ -87,10 +90,10 @@ class MsgWorker:
         def state_multiple_choice(sender, state, msg=None):
             if msg is None:
                 if type(state_welcomes) is not list:
-                    VkApi.send_msg(sender, state_welcomes)
+                    self.vk_api.send_msg(sender, state_welcomes)
                 else:
                     for msg in state_welcomes:
-                        VkApi.send_msg(sender, msg)
+                        self.vk_api.send_msg(sender, msg)
                 return
 
             text = msg['body'].strip()
@@ -103,10 +106,10 @@ class MsgWorker:
 
             if errors:
                 if type(errors) is not list:
-                    VkApi.send_msg(sender, errors)
+                    self.vk_api.send_msg(sender, errors)
                 else:
                     for msg in errors:
-                        VkApi.send_msg(sender, msg)
+                        self.vk_api.send_msg(sender, msg)
             if error_state:
                 return error_state
 
@@ -118,10 +121,10 @@ class MsgWorker:
         def state_text_exit(sender, state, msg=None):
             if msg is None:
                 if type(states) is not list:
-                    VkApi.send_msg(sender, states)
+                    self.vk_api.send_msg(sender, states)
                 else:
                     for msg in states:
-                        VkApi.send_msg(sender, msg)
+                        self.vk_api.send_msg(sender, msg)
                 if not wait_next:
                     return exit_state
                 return
